@@ -5,7 +5,6 @@ import cors from 'cors';
 import morgan from 'morgan';
 import logger from './core/logger/app-logger';
 import config from './core/config/config.dev';
-import cars from './routes/cars.route';
 import auth from './routes/auth.route';
 import chats from './routes/chats.route';
 import connectToDb from './db/connect';
@@ -29,7 +28,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev', { stream: logger.stream }));
 
-app.use('/cars', cars);
 app.use('/auth', auth);
 app.use('/chats', chats);
 
