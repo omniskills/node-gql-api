@@ -6,18 +6,18 @@ import config from '../core/config/config.dev';
 
 const loginSchema = Joi.object().keys({
   email: Joi.string().email().required(),
-  password: Joi.string().max(255).min(8)
+  password: Joi.string().max(255).min(8),
 });
 
 const userSchema = Joi.object().keys({
   email: Joi.string().email().required(),
   password: Joi.string().max(255).min(8),
-  name: Joi.string().max(255).required()
+  name: Joi.string().max(255).required(),
 });
 
 function getToken(user) {
   return jwt.sign({ id: user._id }, config.JWT_SECRET, {
-    expiresIn: 86400 // expires in 24 hours
+    expiresIn: 86400, // expires in 24 hours
   });
 }
 
@@ -29,7 +29,7 @@ controller.login = async (req, res, next) => {
 
     const user = await User.findOne({ email: data.email });
 
-    user.comparePassword(data.password, function(err, rst) {
+    user.comparePassword(data.password, (err, rst) => {
       if (err) next(err);
 
       if (rst) {
@@ -40,9 +40,8 @@ controller.login = async (req, res, next) => {
         res.status(401).send('Invalid email or password');
       }
     });
-
   } catch (err) {
-    logger.error(`Error logging in user`);
+    logger.error('Error logging in user');
     if (err.isJoi) {
       res.status(500).send(err.details[0].message);
     } else {
@@ -51,7 +50,7 @@ controller.login = async (req, res, next) => {
   }
 };
 
-controller.register = async (req, res, next) => {
+controller.register = async (req, res) => {
   try {
     const data = await Joi.validate(req.body, userSchema);
 
@@ -60,10 +59,10 @@ controller.register = async (req, res, next) => {
 
     res.send({
       user: user.toObject(),
-      token: getToken(user)
+      token: getToken(user),
     });
   } catch (err) {
-    logger.error(`Error registering user`);
+    logger.error('Error registering user');
     if (err.isJoi) {
       res.status(500).send(err.details[0].message);
     } else if (err.code === 11000) {
