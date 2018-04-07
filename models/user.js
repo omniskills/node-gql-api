@@ -18,7 +18,7 @@ const UserSchema = mongoose.Schema({
   workspace: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: 'User',
+    ref: 'Workspace',
   },
 }, { collection: 'users' });
 

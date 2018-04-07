@@ -7,6 +7,7 @@ import logger from './core/logger/app-logger';
 import config from './core/config/config.dev';
 import auth from './routes/auth.route';
 import chats from './routes/chats.route';
+import workspaces from './routes/workspaces.route';
 import connectToDb from './db/connect';
 import initSocketIO from './socket';
 
@@ -30,6 +31,7 @@ app.use(morgan('dev', { stream: logger.stream }));
 
 app.use('/auth', auth);
 app.use('/chats', chats);
+app.use('/workspaces', workspaces);
 
 // Index route
 app.get('/', (req, res) => {
