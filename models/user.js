@@ -6,18 +6,21 @@ const UserSchema = mongoose.Schema({
   name: {
     type: String,
     required: true,
-    unique: true,
   },
   email: {
     type: String,
     required: true,
-    unique: true,
   },
   password: {
     type: String,
     required: true,
   },
-}, { collection: 'User' });
+  workspace: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User',
+  },
+}, { collection: 'users' });
 
 UserSchema.pre('save', function (next) {
   const user = this;
@@ -51,7 +54,7 @@ UserSchema.methods.genToken = function () {
 
 if (!UserSchema.options.toObject) UserSchema.options.toObject = {};
 
-UserSchema.options.toObject.transform = (doc, ret, options) => {
+UserSchema.options.toObject.transform = (doc, ret) => {
   return {
     email: ret.email,
     name: ret.name,

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const MessageSchema = mongoose.Schema({
-  userId: {
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: 'User',
@@ -15,7 +15,7 @@ const MessageSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-}, { collection: 'Message' });
+}, { collection: 'messages' });
 
 if (!MessageSchema.options.toObject) {
   MessageSchema.options.toObject = {};

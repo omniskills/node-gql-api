@@ -17,8 +17,6 @@ controller.getLast7Days = async (req, res) => {
       name: msg.name,
     }));
 
-    console.log(data);
-    logger.info('sending all cars...');
     res.send(data);
   } catch (err) {
     logger.error(`Error in getting cars- ${err}`);

@@ -1,8 +1,8 @@
 import SocketIO from 'socket.io';
 import jwt from 'jsonwebtoken';
 import config from '../core/config/config.dev';
-import Message from '../models/message';
 import User from '../models/user';
+import configureChannels from './channels';
 
 const sockets = {};
 
@@ -20,6 +20,11 @@ const initSocketIO = (server) => {
       }
 
       const userId = decoded.id;
+
+      if (sockets[userId]) {
+        sockets[userId].disconnect();
+      }
+
       sockets[userId] = socket;
 
       User.findById(userId, (err1, user) => {
@@ -29,32 +34,7 @@ const initSocketIO = (server) => {
           return;
         }
 
-        socket.on('disconnect', () => {
-          console.log(`[INFO] User ${userId} disconnected!`);
-          socket.broadcast.emit('userDisconnect', { userId });
-        });
-
-        socket.on('sendchat', (text) => {
-          console.log(user);
-
-          const msg = new Message({
-            userId,
-            name: user.name,
-            time: new Date().getTime(),
-            text,
-          });
-          msg.save();
-
-          const data = {
-            msg: {
-              ...msg.toObject(),
-              name: user.name,
-            },
-          };
-
-          socket.emit('receivemsg', data);
-          socket.broadcast.emit('receivemsg', data);
-        });
+        configureChannels(socket, user);
       });
     });
   });
