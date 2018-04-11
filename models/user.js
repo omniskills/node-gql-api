@@ -3,22 +3,19 @@ import bcrypt from 'bcrypt';
 import config from '../core/config/config.dev';
 
 const UserSchema = mongoose.Schema({
-  name: {
+  username: {
     type: String,
     required: true,
+    unique: true,
   },
   email: {
     type: String,
     required: true,
+    unique: true,
   },
   password: {
     type: String,
     required: true,
-  },
-  workspace: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: 'Workspace',
   },
 }, { collection: 'users' });
 
@@ -57,7 +54,7 @@ if (!UserSchema.options.toObject) UserSchema.options.toObject = {};
 UserSchema.options.toObject.transform = (doc, ret) => {
   return {
     email: ret.email,
-    name: ret.name,
+    username: ret.username,
   };
 };
 

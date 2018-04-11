@@ -2,22 +2,18 @@
 import Joi from 'joi';
 import jwt from 'jsonwebtoken';
 import User from '../models/user';
-import Workspace from '../models/workspace';
 import logger from '../core/logger/app-logger';
 import config from '../core/config/config.dev';
 
 const loginSchema = Joi.object().keys({
   email: Joi.string().email().required(),
   password: Joi.string().max(255).min(8),
-  wsSlug: Joi.string().max(255).required(),
 });
 
 const userSchema = Joi.object().keys({
   email: Joi.string().email().required(),
   password: Joi.string().max(255).min(8),
-  name: Joi.string().max(255).required(),
-  wsSlug: Joi.string().max(255).required(),
-  wsName: Joi.string().max(255),
+  username: Joi.string().max(255).required(),
 });
 
 function getToken(user) {
@@ -31,9 +27,8 @@ const controller = {};
 controller.login = async (req, res, next) => {
   try {
     const data = await Joi.validate(req.body, loginSchema);
-    const workspace = await Workspace.findOne({ displayName: data.wsSlug });
 
-    const user = await User.findOne({ email: data.email, workspace: workspace._id });
+    const user = await User.findOne({ email: data.email });
 
     user.comparePassword(data.password, (err, rst) => {
       if (err) next(err);
@@ -60,16 +55,7 @@ controller.register = async (req, res) => {
   try {
     const data = await Joi.validate(req.body, userSchema);
 
-    const workspace = new Workspace({
-      displayName: data.wsSlug,
-      fullName: data.wsName || 'Workspace Name',
-    });
-    workspace.save();
-
-    const user = new User({
-      ...data,
-      workspace,
-    });
+    const user = new User(data);
     await user.save();
 
     res.send({
