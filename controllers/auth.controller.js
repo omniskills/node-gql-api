@@ -74,4 +74,10 @@ controller.register = async (req, res) => {
   }
 };
 
+controller.validate = async (req, res) => {
+  res.send({
+    user: req.user.toObject(),
+  });
+}
+
 export default controller;
