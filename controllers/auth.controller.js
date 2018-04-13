@@ -30,21 +30,26 @@ controller.login = async (req, res, next) => {
 
     const user = await User.findOne({ email: data.email });
 
-    user.comparePassword(data.password, (err, rst) => {
-      if (err) next(err);
+    if (user) {
+      user.comparePassword(data.password, (err, rst) => {
+        if (err) next(err);
 
-      if (rst) {
-        const token = getToken(user);
+        if (rst) {
+          const token = getToken(user);
 
-        res.send({ user, token });
-      } else {
-        res.status(401).send('Invalid email or password');
-      }
-    });
+          res.send({ user, token });
+        } else {
+          res.status(401).send('Invalid email or password');
+        }
+      });
+    } else {
+      res.status(401).send('Invalid email or password');
+    }
   } catch (err) {
     logger.error('Error logging in user');
+
     if (err.isJoi) {
-      res.status(500).send(err.details[0].message);
+      res.status(400).send(err.details[0].message);
     } else {
       res.status(500).send('Server side error');
     }
