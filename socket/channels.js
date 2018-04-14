@@ -9,16 +9,16 @@ const configureChannels = (socket, user) => {
   socket.on('send', (data) => {
     const msg = new Message({
       user: user._id,
-      name: user.name,
+      name: user.username,
       time: new Date().getTime(),
-      text: data.text,
+      text: data,
     });
     msg.save();
 
     const msgData = {
       msg: {
         ...msg.toObject(),
-        name: user.name,
+        name: user.username,
       },
     };
 
