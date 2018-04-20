@@ -19,9 +19,33 @@ controller.getLast7Days = async (req, res) => {
 
     res.send(data);
   } catch (err) {
-    logger.error(`Error in getting cars- ${err}`);
-    res.send('Got error in getAll');
+    logger.error(`Error in getting chats- ${err}`);
+    res.status(500).send('Got error in getAll');
   }
 };
+
+controller.send = async (req, res) => {
+  try {
+    const msg = new Message({
+      user: req.user._id,
+      name: req.user.username,
+      time: new Date().getTime(),
+      text: req.body.data,
+    });
+    msg.save();
+
+    const msgData = {
+      msg: {
+        ...msg.toObject(),
+        name: req.user.username,
+      },
+    };
+
+    res.send(msgData);
+  } catch (err) {
+    logger.error(`Error in getting chats- ${err}`);
+    res.status(500).send('Got error in getAll');
+  }
+}
 
 export default controller;
