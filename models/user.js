@@ -45,6 +45,18 @@ UserSchema.methods.comparePassword = function (candidatePassword, cb) {
   });
 };
 
+UserSchema.methods.comparePasswordPromise = function (candidatePassword) {
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
+      if (err) {
+        return reject(err);
+      }
+
+      resolve(isMatch);
+    });
+  });
+};
+
 UserSchema.methods.genToken = function () {
   return this.email;
 };

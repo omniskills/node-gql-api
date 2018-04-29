@@ -46,6 +46,6 @@ controller.send = async (req, res) => {
     logger.error(`Error in getting chats- ${err}`);
     res.status(500).send('Got error in getAll');
   }
-}
+};
 
 export default controller;
